@@ -194,7 +194,8 @@ const extension: JupyterFrontEndPlugin<void> = {
         let widget = new Widget();
         widget.node.innerHTML = 'Creating new files coming...';
         //let widget = new MonacoWidget();
-        app.shell.addToMainArea(widget);
+        //app.shell.addToMainArea(widget);
+        app.shell.add(widget, 'main');
 
         // Activate the widget
         app.shell.activateById(widget.id);
