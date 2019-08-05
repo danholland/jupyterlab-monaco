@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "jupyterlab-monaco",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A JupyterLab extension providing the Monaco editor.",
   "keywords": [
     "jupyter",
@@ -30,17 +30,17 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.18.0",
-    "@jupyterlab/apputils": "^0.18.0",
-    "@jupyterlab/coreutils": "^2.0.2",
-    "@jupyterlab/fileeditor": "^0.18.0",
-    "monaco-editor": "^0.13.1"
+    "@jupyterlab/application": "",
+    "@jupyterlab/apputils": "",
+    "@jupyterlab/coreutils": "",
+    "@jupyterlab/fileeditor": "",
+    "monaco-editor": ""
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
     "typescript": "~2.6.0",
     "webpack": "^4.6.0",
-    "webpack-cli": "^2.0.14"
+    "webpack-cli": "^3.1.1"
   },
   "jupyterlab": {
     "extension": true

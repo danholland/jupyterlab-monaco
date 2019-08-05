@@ -10,34 +10,26 @@
  */
 
 import {
-  JupyterLab, JupyterLabPlugin
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
+import { ICommandPalette } from '@jupyterlab/apputils';
+
+import { PathExt } from '@jupyterlab/coreutils';
 
 import {
-  ICommandPalette
-} from '@jupyterlab/apputils';
-
-import {
-  PathExt
-} from '@jupyterlab/coreutils';
-
-import {
-  ABCWidgetFactory, DocumentRegistry, IDocumentWidget, DocumentWidget
+  ABCWidgetFactory,
+  DocumentRegistry,
+  IDocumentWidget,
+  DocumentWidget
 } from '@jupyterlab/docregistry';
 
-import {
-  IEditorTracker
-} from '@jupyterlab/fileeditor';
+import { IEditorTracker } from '@jupyterlab/fileeditor';
 
-import {
-  PromiseDelegate,
-  UUID
-} from '@phosphor/coreutils';
+import { PromiseDelegate, UUID } from '@phosphor/coreutils';
 
-import {
-  Widget
-} from '@phosphor/widgets';
+import { Widget } from '@phosphor/widgets';
 
 import * as monaco from 'monaco-editor';
 
@@ -49,8 +41,7 @@ import * as monacoHTML from 'file-loader!../lib/html.worker.bundle.js';
 import * as monacoJSON from 'file-loader!../lib/json.worker.bundle.js';
 import * as monacoTS from 'file-loader!../lib/ts.worker.bundle.js';
 
-
-let URLS: {[key: string]: string} = {
+let URLS: { [key: string]: string } = {
   css: monacoCSS,
   html: monacoHTML,
   javascript: monacoTS,
@@ -59,17 +50,16 @@ let URLS: {[key: string]: string} = {
 };
 
 (self as any).MonacoEnvironment = {
-  getWorkerUrl: function (moduleId: string, label: string): string {
+  getWorkerUrl: function(moduleId: string, label: string): string {
     let url = URLS[label] || monacoEditor;
     return url;
   }
-}
+};
 
 /**
-* An monaco widget.
-*/
-export
-class MonacoWidget extends Widget {
+ * An monaco widget.
+ */
+export class MonacoWidget extends Widget {
   /**
    * Construct a new Monaco widget.
    */
@@ -84,7 +74,7 @@ class MonacoWidget extends Widget {
     let uri = monaco.Uri.file(context.path);
 
     let monaco_model = undefined;
-    if(monaco.editor.getModel(uri)) {
+    if (monaco.editor.getModel(uri)) {
       monaco_model = monaco.editor.getModel(uri);
     } else {
       monaco_model = monaco.editor.createModel(content, undefined, uri);
@@ -94,11 +84,13 @@ class MonacoWidget extends Widget {
       model: monaco_model
     });
 
-    monaco_model.onDidChangeContent((event) => {
+    monaco_model.onDidChangeContent(event => {
       this.context.model.value.text = this.editor.getValue();
     });
 
-    context.ready.then(() => { this._onContextReady(); });
+    context.ready.then(() => {
+      this._onContextReady();
+    });
   }
 
   /**
@@ -152,17 +144,19 @@ class MonacoWidget extends Widget {
   editor: monaco.editor.IStandaloneCodeEditor;
 }
 
-
 /**
  * A widget factory for editors.
  */
-export
-class MonacoEditorFactory extends ABCWidgetFactory<IDocumentWidget<MonacoWidget>, DocumentRegistry.ICodeModel> {
-
+export class MonacoEditorFactory extends ABCWidgetFactory<
+  IDocumentWidget<MonacoWidget>,
+  DocumentRegistry.ICodeModel
+> {
   /**
    * Create a new widget given a context.
    */
-  protected createNewWidget(context: DocumentRegistry.CodeContext): IDocumentWidget<MonacoWidget> {
+  protected createNewWidget(
+    context: DocumentRegistry.CodeContext
+  ): IDocumentWidget<MonacoWidget> {
     const content = new MonacoWidget(context);
     const widget = new DocumentWidget({ content, context });
     return widget;
@@ -176,12 +170,15 @@ class MonacoEditorFactory extends ABCWidgetFactory<IDocumentWidget<MonacoWidget>
  * The only reason we depend on the IEditorTracker is so that our docregistry
  * 'defaultFor' runs *after* the file editors defaultFor.
  */
-const extension: JupyterLabPlugin<void> = {
+const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-monaco',
   autoStart: true,
   requires: [ICommandPalette, IEditorTracker],
-  activate: (app: JupyterLab, palette: ICommandPalette, editorTracker: IEditorTracker) => {
-
+  activate: (
+    app: JupyterFrontEnd,
+    palette: ICommandPalette,
+    editorTracker: IEditorTracker
+  ) => {
     const factory = new MonacoEditorFactory({
       name: 'Monaco Editor',
       fileTypes: ['*'],
@@ -195,7 +192,7 @@ const extension: JupyterLabPlugin<void> = {
       label: 'Monaco Editor',
       execute: () => {
         let widget = new Widget();
-        widget.node.innerHTML = 'Creating new files coming...'
+        widget.node.innerHTML = 'Creating new files coming...';
         //let widget = new MonacoWidget();
         app.shell.addToMainArea(widget);
 
